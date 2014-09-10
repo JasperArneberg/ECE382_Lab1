@@ -12,13 +12,18 @@
             .retainrefs                     ; Additionally retain any sections
                                             ; that have references to current
                                             ; section
-program:	.byte		0x14, 0x11, 0x32, 0x22, 0x08, 0x44, 0x04, 0x11, 0x08, 0x55
+program:	.byte		0x81, 0x11, 0x81
 ADD_OP:   	.equ    	0x11
 SUB_OP: 	.equ		0x22
 MUL_OP: 	.equ		0x33
 CLR_OP:		.equ		0x44
 END_OP:		.equ		0x55
-results:	.equ		0x0200					;location of RAM
+max_val:	.equ		255
+zero:		.equ		0
+
+			.data
+results:	.space		40					;40 bytes fo memory in RAM
+			.text							;back to ROM
 
 ;-------------------------------------------------------------------------------
 RESET       mov.w   #__STACK_END,SP         ; Initialize stackpointer
@@ -49,6 +54,9 @@ testOp:
 
 addOp:
 	add.b	R7,			R6
+	jnc		write2RAM
+
+	mov.b	#max_val,		R6					;carry flag, set R6 to max value of 255
 	jmp 	write2RAM
 
 subOp:
@@ -61,7 +69,7 @@ mulOp:
 
 clrOp:
 	mov.b	R7,			R6					;first operand is now the second operand
-	mov.b	#0x00,		0(R9)
+	mov.b	#zero,		0(R9)				;store 0 to next RAM location
 	inc		R9
 	jmp 	read2
 
