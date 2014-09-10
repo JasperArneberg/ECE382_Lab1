@@ -12,7 +12,7 @@
             .retainrefs                     ; Additionally retain any sections
                                             ; that have references to current
                                             ; section
-program:	.byte		0x14,	0x11,	0x12,	0x22,	0x20,	0x55
+program:	.byte		0x14, 0x11, 0x32, 0x22, 0x08, 0x44, 0x04, 0x11, 0x08, 0x55
 ADD_OP:   	.equ    	0x11
 SUB_OP: 	.equ		0x22
 MUL_OP: 	.equ		0x33
@@ -60,8 +60,10 @@ mulOp:
 	;jmp write2RAM
 
 clrOp:
-	mov.b	0x00,		R6
-	jmp 	write2RAM
+	mov.b	R7,			R6					;first operand is now the second operand
+	mov.b	#0x00,		0(R9)
+	inc		R9
+	jmp 	read2
 
 write2RAM:
 	mov.b	R6,			0(R9)
