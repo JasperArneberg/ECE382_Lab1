@@ -23,6 +23,7 @@ SUB_OP: 	.equ	0x22
 MUL_OP: 	.equ	0x33
 CLR_OP:		.equ	0x44
 END_OP:		.equ	0x55
+results:	.equ	0x0200					;location of RAM
 ;-------------------------------------------------------------------------------
                                             ; Main loop here
 ;-------------------------------------------------------------------------------
@@ -62,9 +63,10 @@ clrOp:
 	;jmp write2RAM
 
 write2RAM:
-	;store R6 to RAM location
-	;increase RAM pointer
-	;jmp Read2
+	mov		#results,	R9					;R9 is RAM pointer
+	mov.b	R6,			0(R9)
+	inc.b	R9
+	jmp read2
 
 end:
 	jmp		end		;infinite loop
