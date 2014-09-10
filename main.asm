@@ -17,35 +17,35 @@ RESET       mov.w   #__STACK_END,SP         ; Initialize stackpointer
 StopWDT     mov.w   #WDTPW|WDTHOLD,&WDTCTL  ; Stop watchdog timer
 
 
-program:	.byte
+program:	.byte	0x14,	0x11,	0x12
+ADD_OP:   	.equ    0x11
+SUB_OP: 	.equ	0x22
+MUL_OP: 	.equ	0x33
+CLR_OP:		.equ	0x44
+END_OP:		.equ	0x55
 ;-------------------------------------------------------------------------------
                                             ; Main loop here
 ;-------------------------------------------------------------------------------
 
-	;store first value to R6
-	;increase ROM pointer
+	mov		#program,	R8
+	mov.b	@R8+,	R6						;store first operand and increase ROM pointer
 
 read2:
-	;move op to R5
-	;increase ROM pointer
+	mov.b	@R8+,	R5						;store op to R5, increase ROM pointer
+	mov.b	@R8+,	R7						;store second operand
 
-	;mov second value to R7
-	;increase ROM pointer
+	mov.b 	#ADD_OP,	R10
 
 testOp:
-	;test = END_OP
-	;jz end
-	;compare to ADD_OP
-	;jz addOp
-	;compare to SUB_OP
-	;jz subOp
-	;compare to CLR_OP
-	;jz clearOp
-	;jmp end				;error!
-
-clearOp:
-	;mov 0 to R6
-	;jmp write2RAM
+	cmp.b	#ADD_OP,	R5
+	jz addOp
+	cmp.b	#SUB_OP,	R5
+	jz subOp
+	cmp.b	#MUL_OP,	R5
+	jz mulOp
+	cmp.b	#CLR_OP,	R5
+	jz clrOp
+	jmp end									;equal to END_OP or there is an error
 
 addOp:
 	;add R7 to R6
@@ -53,6 +53,15 @@ addOp:
 
 subOp:
 	;sub R7 from R6
+	;jmp write2RAM
+
+mulOp:
+	;mult R7 and R6
+	;jmp write2RAM
+
+clrOp:
+	;mov 0 to R6
+	;jmp write2RAM
 
 write2RAM:
 	;store R6 to RAM location
