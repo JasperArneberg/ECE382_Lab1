@@ -12,7 +12,7 @@
             .retainrefs                     ; Additionally retain any sections
                                             ; that have references to current
                                             ; section
-program:	.byte		0x81, 0x11, 0x81
+program:	.byte		0x81, 0x22, 0x86
 ADD_OP:   	.equ    	0x11
 SUB_OP: 	.equ		0x22
 MUL_OP: 	.equ		0x33
@@ -56,11 +56,14 @@ addOp:
 	add.b	R7,			R6
 	jnc		write2RAM
 
-	mov.b	#max_val,		R6					;carry flag, set R6 to max value of 255
+	mov.b	#max_val,	R6					;carry flag, set R6 to max value of 255
 	jmp 	write2RAM
 
 subOp:
 	sub		R7,			R6
+	jge 	write2RAM
+
+	mov.b	#zero,		R6					;negative answers not allowed, store 0 instead
 	jmp 	write2RAM
 
 mulOp:
