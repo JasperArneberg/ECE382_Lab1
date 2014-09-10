@@ -28,13 +28,11 @@ END_OP:		.equ	0x55
 ;-------------------------------------------------------------------------------
 
 	mov		#program,	R8
-	mov.b	@R8+,	R6						;store first operand and increase ROM pointer
+	mov.b	@R8+,		R6					;store first operand and increase ROM pointer
 
 read2:
-	mov.b	@R8+,	R5						;store op to R5, increase ROM pointer
-	mov.b	@R8+,	R7						;store second operand
-
-	mov.b 	#ADD_OP,	R10
+	mov.b	@R8+,		R5					;store op to R5, increase ROM pointer
+	mov.b	@R8+,		R7					;store second operand
 
 testOp:
 	cmp.b	#ADD_OP,	R5
@@ -48,8 +46,8 @@ testOp:
 	jmp end									;equal to END_OP or there is an error
 
 addOp:
-	;add R7 to R6
-	;jmp write2RAM
+	add.b	R7,			R6
+	jmp write2RAM
 
 subOp:
 	;sub R7 from R6
