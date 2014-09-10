@@ -12,7 +12,7 @@
             .retainrefs                     ; Additionally retain any sections
                                             ; that have references to current
                                             ; section
-program:	.byte		0x81, 0x22, 0x86
+program:	.byte		0x18,0x33,0x12
 ADD_OP:   	.equ    	0x11
 SUB_OP: 	.equ		0x22
 MUL_OP: 	.equ		0x33
@@ -36,6 +36,7 @@ initialize:
 	mov		#program,	R8					;R8 is ROM pointer
 	mov		#results,	R9					;R9 is RAM pointer
 	mov.b	@R8+,		R6					;store first operand and increase ROM pointer
+	mov.b	#zero,		R11
 
 read2:
 	mov.b	@R8+,		R5					;R5 holds op code
@@ -67,8 +68,18 @@ subOp:
 	jmp 	write2RAM
 
 mulOp:
-	;mult R7 and R6
-	;jmp write2RAM
+	cmp		#zero,		R7
+	jz		exit_mul_loop					;jump once R7 counts down to 0
+	dec		R7
+	add.b	R6,			R11					;store result in R11 temporarily
+	jnc		mulOp
+
+	mov.b	#max_val,	R11					;value now exceeds limit, store 255
+
+exit_mul_loop:
+	mov.b	R11,		R6
+	jnc		write2RAM						;somehow test to see if overflow error
+	jmp		write2RAM
 
 clrOp:
 	mov.b	R7,			R6					;first operand is now the second operand
@@ -82,7 +93,7 @@ write2RAM:
 	jmp 	read2
 
 end:
-	jmp		end		;infinite loop
+	jmp		end								;infinite loop
 
 ;-------------------------------------------------------------------------------
 ;           Stack Pointer definition
