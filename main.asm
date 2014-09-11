@@ -12,7 +12,7 @@
             .retainrefs                     ; Additionally retain any sections
                                             ; that have references to current
                                             ; section
-program:	.byte		0x18,0x33,0x12
+program:	.byte		0x22, 0x11, 0x22, 0x22, 0x33, 0x33, 0x08, 0x44, 0x08, 0x22, 0x09, 0x44, 0xff, 0x11, 0xff, 0x44, 0xcc, 0x33, 0x02, 0x33, 0x00, 0x44, 0x33, 0x33, 0x08, 0x55
 ADD_OP:   	.equ    	0x11
 SUB_OP: 	.equ		0x22
 MUL_OP: 	.equ		0x33
@@ -36,11 +36,11 @@ initialize:
 	mov		#program,	R8					;R8 is ROM pointer
 	mov		#results,	R9					;R9 is RAM pointer
 	mov.b	@R8+,		R6					;store first operand and increase ROM pointer
-	mov.b	#zero,		R11
 
 read2:
 	mov.b	@R8+,		R5					;R5 holds op code
 	mov.b	@R8+,		R7					;R7 holds second operand
+	mov.b	#zero,		R11					;reset R11 register used in multiplication
 
 testOp:
 	cmp.b	#ADD_OP,	R5
@@ -78,7 +78,6 @@ mulOp:
 
 exit_mul_loop:
 	mov.b	R11,		R6
-	jnc		write2RAM						;somehow test to see if overflow error
 	jmp		write2RAM
 
 clrOp:
