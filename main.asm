@@ -12,7 +12,7 @@
             .retainrefs                     ; Additionally retain any sections
                                             ; that have references to current
                                             ; section
-program:	.byte		0x11, 0x33, 0x07
+program:	.byte		0x22, 0x11, 0x22, 0x22, 0x33, 0x33, 0x08, 0x44, 0x08, 0x22, 0x09, 0x44, 0xff, 0x11, 0xff, 0x44, 0xcc, 0x33, 0x02, 0x33, 0x00, 0x44, 0x33, 0x33, 0x08, 0x55
 ADD_OP:   	.equ    	0x11
 SUB_OP: 	.equ		0x22
 MUL_OP: 	.equ		0x33
@@ -62,41 +62,41 @@ subOp:
 	jn		store_min						;negative answers not allowed, store 0 instead
 	jmp 	write2RAM
 
-;mulOp:										;O(n)
-;	cmp		#zero,		R7
-;	jz		exit_mul_loop					;jump once R7 counts down to 0
-;	dec		R7
-;	add.b	R6,			R11					;store result in R11 temporarily
-;	jnc		mulOp
-;
-;	mov.b	#max_val,	R11					;value now exceeds limit, store 255
-;
-
 mulOp:										;O(log n)
-	tst.b	R7
-	jz		store_min
-	clr		R11								;R11 stores when R7 is odd
-	mov		R6,			R12					;store original value of first operand
-
-	rrc.b	R7								;cut second operand in half before start
+	;tst.b	R7
+	;jz		store_min
+	clr		R11								;placeholder register
+	clr		R12
+	clr		R13								;cumulative result
 
 mul_loop:
+	add.b	R12,	R13
+	jc		store_max
+	clr		R12								;result from each iteration of mul_loop
 	tst.b	R7
 	jz		exit_mul_loop
 
+	mov.b	R11,	R14						;copy of placeholder
+	inc.b	R11								;increase for the next loop's place
+
 	clrc
-	rlc.b	R6								;double R6
+	rrc.b	R7								;cut second operand in half
+	jnc		mul_loop
+
+	add.b	R6,		R12						;first operand into temporary result register
+
+bitshift_loop:
+	tst		R14								;placeholder register
+	jz 		mul_loop
+
+	clrc
+	rlc.b	R12
 	jc		store_max
-
-	rrc.b	R7								;cut R7 in half
-	jnc		mul_loop						;R7 was even
-
-	add.b	R12,		R11					;R7 was odd, add in one value of original first operand
-	jmp		mul_loop
+	dec.b	R14
+	jmp		bitshift_loop
 
 exit_mul_loop:
-	add.b	R11,		R6					;add carries to total
-	jc		store_max
+	mov.b	R13,	R6						;put product into R6
 	jmp		write2RAM
 
 clrOp:
