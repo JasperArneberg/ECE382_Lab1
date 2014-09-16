@@ -85,19 +85,19 @@ mulOp:										;O(log n)
 	clr		R13								;cumulative result
 
 mul_loop:									;4x5 = 4*2^0 + 4*2^2  ; 5 = 0101  ; second operand has 1 at placeholder 0 and 2
-	add.b	R12,	R13						;add intermediate result from bitshift_loop to cumulative result
+	add.b	R12,		R13					;add intermediate result from bitshift_loop to cumulative result
 	jc		store_max
 	clr		R12								;result from each iteration of mul_loop
 	tst.b	R7
 	jz		exit_mul_loop					;once second operand reaches 0, exit multiplication
 
-	mov.b	R11,	R14						;copy of placeholder for use in bitshift_loop
+	mov.b	R11,		R14					;copy of placeholder for use in bitshift_loop
 	inc.b	R11								;increase for the next loop's place
 	clrc
 	rrc.b	R7								;cut second operand in half
 	jnc		mul_loop
 
-	add.b	R6,		R12						;first operand into temporary result register
+	add.b	R6,			R12					;first operand into temporary result register
 
 bitshift_loop:								;double first operand the number of times equal to the placeholder value, store to R12
 	tst		R14
@@ -109,7 +109,7 @@ bitshift_loop:								;double first operand the number of times equal to the pla
 	jmp		bitshift_loop
 
 exit_mul_loop:
-	mov.b	R13,	R6						;put final product into R6
+	mov.b	R13,		R6					;put final product into R6
 	jmp		write2RAM
 
 clrOp:
