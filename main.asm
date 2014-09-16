@@ -1,12 +1,24 @@
 ;-------------------------------------------------------------------------------
 ; Lab 1: Calculator
 ; C2C Jasper T. Arneberg
-; ECE 382
+; T5 ECE 382
+; Capt Trimble
 ;
 ; Documentation: None
 ;
 ; Description: This program is a calculator. It reads instructions from ROM and
-; puts the results into RAM.
+; puts the results into RAM. TestOp makes the program counter jump to the appropriate
+; location of the matching operation. The addition operation simply adds the two
+; operands and jumps to write2RAM. The subtraction operation likewise calculates
+; the difference of two operands. The clear instruction clears the first operand.
+; Without the clear instruction, the program uses the result from the last operation
+; as the first operand in the next one.
+
+; Finally, the multiplication operation stores the product of the two operands. This is
+; accomplished in an O(log n) fashion. To accomplish this, the operation makes use of
+; the bitshift_loop, which effectively doubles the first operand a specified number of
+; times and adds it to a intermediate result register. This register is then added to
+; the cumulative result register after each bitshift_loop is exited.
 ;-------------------------------------------------------------------------------
             .cdecls C,LIST,"msp430.h"       ; Include device header file
 
@@ -27,7 +39,7 @@ max_val:	.equ		255
 zero:		.equ		0
 
 			.data
-results:	.space		40					;40 bytes fo memory in RAM
+results:	.space		40					;40 bytes of memory in RAM
 			.text							;back to ROM
 
 ;-------------------------------------------------------------------------------
@@ -46,7 +58,7 @@ read2:
 	mov.b	@R8+,		R5					;R5 holds op code
 	mov.b	@R8+,		R7					;R7 holds second operand
 
-testOp:
+testOp:										;match the op code
 	cmp.b	#ADD_OP,	R5
 	jz 		addOp
 	cmp.b	#SUB_OP,	R5
@@ -59,7 +71,7 @@ testOp:
 
 addOp:
 	add.b	R7,			R6
-	jc		store_max
+	jc		store_max						;maximum is reached
 	jmp		write2RAM
 
 subOp:
