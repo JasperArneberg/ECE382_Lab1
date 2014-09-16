@@ -57,44 +57,47 @@ end:
 
 #Lab
 
+##Objective
+The objective of this lab was to develop a calculator in the assembly programming language. This involved implementing a variety of elements such as instruction sets, addressing modes, and status flags. Overall, it demonstrated how high-level programs could be developed in assembly.
+
 ##Debugging
 Several errors were encountered during the debugging process. One of the trickiest ones to solve was that the program and constants were originally stored after the watchdog timer was reset. This led to errors, but not every time, so it was very difficult to figure out what the problem was. Eventually, the problem was fixed after inspecting examples of code in class.
 
+While implementing multiplication functionality, another error was encountered. The carry bit was never cleared before performing a bit rotation instruction. This led to wildly inaccurate answers.
+
 ##Testing
-The code was tested with a variety of commands gradually increasing in complexity. At first simple commands were executed to test the idnividual aspects of the code. For example:
+The code was tested with a variety of instructions gradually increasing in complexity. At first simple commands were executed to test the individual aspects of the code. For example:
 
 ```
 Program: 0x12, 0x11, 0x14
 Result: 0x26
 ```
 
-The code available on the website was tested as well, and it was verified to be correct:
+After sufficient testing of the individual aspects, the code on the website was tested as well. It was verified to be correct:
 
-Basic Functionality:
+####Basic Functionality: Addition, subtraction, and clear
+This functionality required getting values from ROM and then adding, subtracting, or clearing based off of the value of the op code.
 ```
 Program: 0x11, 0x11, 0x11, 0x11, 0x11, 0x44, 0x22, 0x22, 0x22, 0x11, 0xCC, 0x55
 Result: 0x22, 0x33, 0x00, 0x00
 ```
 
-B Functionality:
+####B Functionality: Store minimum and maximum values 
+This required recognizing situations when the minimum or maximum values could be exceeded. In these cases, a conditional jump to the store_max or store_min command was called.
 ```
 Program: 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0xDD, 0x44, 0x08, 0x22, 0x09, 0x44, 0xFF, 0x22, 0xFD, 0x55
 Result: 0x22, 0x33, 0x44, 0xFF, 0x00, 0x00, 0x00, 0x02
 ```
 
-A Functionality:
+####A Functionality: Multiplication in O(log n)
+At first, this functionality was accomplished in O(n), and the solution was simple. Accomplishing O(log n) was very difficult. Ultimately, bits were rotated in the operands and jumps were executed conditional on the c status flag.
 ```
 Program: 0x22, 0x11, 0x22, 0x22, 0x33, 0x33, 0x08, 0x44, 0x08, 0x22, 0x09, 0x44, 0xff, 0x11, 0xff, 0x44, 0xcc, 0x33, 0x02, 0x33, 0x00, 0x44, 0x33, 0x33, 0x08, 0x55
 Result: 0x44, 0x11, 0x88, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0x00, 0x00, 0xff
 ```
 
-
-#Demonstrations
-| Functionality | Witness | Date | Time |
-| :--: | :--: | :--: | :----: |
-| Basic | ______ | date | time |
-| B Functionality | ______ | date | time |
-| A Functionality | ______ | date | time ||
+#Conclusion
+This lab was a challenge to complete. It incorporated nearly all of the concepts covered so far in class and served as a good learning experience.
 
 #Documentation
 None.
