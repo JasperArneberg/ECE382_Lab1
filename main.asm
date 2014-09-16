@@ -1,7 +1,12 @@
 ;-------------------------------------------------------------------------------
-; MSP430 Assembler Code Template for use with TI Code Composer Studio
+; Lab 1: Calculator
+; C2C Jasper T. Arneberg
+; ECE 382
 ;
+; Documentation: None
 ;
+; Description: This program is a calculator. It reads instructions from ROM and
+; puts the results into RAM.
 ;-------------------------------------------------------------------------------
             .cdecls C,LIST,"msp430.h"       ; Include device header file
 
@@ -12,8 +17,8 @@
             .retainrefs                     ; Additionally retain any sections
                                             ; that have references to current
                                             ; section
-program:	.byte		0x22, 0x11, 0x22, 0x22, 0x33, 0x33, 0x08, 0x44, 0x08, 0x22, 0x09, 0x44, 0xff, 0x11, 0xff, 0x44, 0xcc, 0x33, 0x02, 0x33, 0x00, 0x44, 0x33, 0x33, 0x08, 0x55
-ADD_OP:   	.equ    	0x11
+program:	.byte		0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0xDD, 0x44, 0x08, 0x22, 0x09, 0x44, 0xFF, 0x22, 0xFD, 0x55
+ADD_OP:   	.equ	   	0x11
 SUB_OP: 	.equ		0x22
 MUL_OP: 	.equ		0x33
 CLR_OP:		.equ		0x44
